@@ -1,3 +1,9 @@
+//instructions:
+//1) make sure node.js is installed
+//2) run npm install
+//3) run install -g babel-cli
+//4) run npm run initialize
+//5) run npm start
 class App extends React.Component {
   constructor (props) {
     super(props);
