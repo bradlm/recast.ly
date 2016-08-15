@@ -1,6 +1,12 @@
 var VideoList = ({videos, onClickHandler}) => (
   <div className="video-list media">  
-    {videos.map(video => <VideoListEntry key={video.etag} video={video} onClickHandler={onClickHandler} />)}
+    {videos.map(video => 
+      <VideoListEntry 
+        key={video.etag} 
+        video={video} 
+        onClickHandler={onClickHandler} 
+      />
+    )}
   </div>
 );
 

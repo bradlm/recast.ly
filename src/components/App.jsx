@@ -1,50 +1,28 @@
 class App extends React.Component {
-  constructor () {
-    super();
+  constructor (props) {
+    super(props);
     this.state = {
       // Initialize the state of App to keep track of all the videos in the video list and the current video in the player. Pass this state down as props to its children components. Continue to use the example data.
-      videoList: window.exampleVideoData, 
-      currentVideo: window.exampleVideoData[0]
+      videos: [], 
+      currentVideo: null
     };
   }
 
   componentWillMount () {
-    this.searchYouTube('cats', function(data) {
-      this.setState({
-        videoList: data,
-        currentVideo: data[0]
-      });
-    }.bind(this));
+    this.getYouTubeVideos('nyan cat');
   }
 
-  searchYouTube (query, callback) {
-    $.ajax({
-      url: 'https://www.googleapis.com/youtube/v3/search',
-      type: 'GET',
-      data: {
-        key: window.YOUTUBE_API_KEY,
-        q: query,
-        part: 'snippet',
-        maxResults: 10,
-        type: 'video',
-        videoEmbeddable: true
-      },
-      success: data => {
-        callback(data.items);
-      },
-      error: err => {
-        console.error(err);
-      }
-    });
-  }
-
-  searchHandler (event) {
-    this.searchYouTube(event.target.value, function(data) {
+  getYouTubeVideos (query) {
+    let options = {
+      key: this.props.API_KEY, 
+      query: query
+    };
+    this.props.searchYouTube(options, _.debounce(videos => {
       this.setState({
-        videoList: data,
-        currentVideo: data[0]
+        videos: videos,
+        currentVideo: videos[0]
       });
-    }.bind(this));
+    }, 500));
   }
 
   onClickHandler (video) {
@@ -56,12 +34,14 @@ class App extends React.Component {
   render () {
     return (
       <div>
-        <Nav searchHandler={this.searchHandler.bind(this)}/>
+        <Nav searchHandler={
+          this.getYouTubeVideos.bind(this)
+        }/>
         <div className="col-md-7">
           <VideoPlayer video={this.state.currentVideo} />
         </div>
         <div className="col-md-5">
-          <VideoList videos={this.state.videoList} onClickHandler={this.onClickHandler.bind(this)}/>
+          <VideoList videos={this.state.videos} onClickHandler={this.onClickHandler.bind(this)}/>
         </div>
       </div>
     );
